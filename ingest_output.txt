@@ -1,0 +1,199 @@
+### ../CodeCity-Bench/src/core/loom/models.py
+from dataclasses import dataclass, field
+from typing import Dict, List, Any, Optional
+from enum import Enum
+
+class MetricType(Enum):
+    STRUCTURAL = "structural"
+    COMPLEXITY = "complexity"
+    SEMANTIC = "semantic"
+    VIBE = "vibe"
+    TOPOLOGICAL = "topological"
+    SECURITY = "security"
+
+@dataclass(frozen=True)
+class LoomMetric:
+    """A single data point within the Loom topological space."""
+    name: str
+    value: float
+    metric_type: MetricType
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+@dataclass
+class Lexeme:
+    """
+    The fundamental unit of the 'Loom' weave. 
+    A Lexeme represents a discrete 'knot' of information in the code topology.
+    """
+    id: str
+    label: str  # e.g., "class:User", "function:calculate_total"
+    metrics: List[LoomMetric] = fi
+
+### ../CodeCity-Bench/src/core/loom/weaver.py
+from .layout import calculate_layout
+from .models import Lexeme, LoomMetric, LoomWeave, MetricType
+
+class LoomWeaver:
+    """
+    The LoomWeaver is responsible for transforming discrete code metrics
+    into a continuous topological surface (the 'Weave').
+    """
+
+    def __init__(self, weave: LoomWeave):
+        self.weave = weave
+
+    def weave_topology(self):
+        """
+        Calculates 3D coordinates for all Lexemes based on their
+        interconnectedness and metric values using a force-directed layout.
+        """
+        nodes_data = {}
+        for lexeme_id, lexeme in self.weave.lexemes.items():
+            complexity_metric = 0.0
+            for metric in lexeme.metrics:
+                if metric.metric_type == MetricType.COMPLEXITY:
+                    complexity_metric = met
+
+### ../CodeCity-Bench/src/core/loom/layout.py
+import math
+
+def calculate_layout(nodes_data):
+    nodes = {}
+    for node_id, data in nodes_data.items():
+        nodes[node_id] = {
+            'connections': data.get('connections', []),
+            'complexity': data.get('complexity', 0.0),
+            'x': 0.0, 'y': 0.0, 'z': 0.0
+        }
+
+    # Initialize positions randomly (simplified)
+    for node_id in nodes:
+        nodes[node_id]['x'] = (hash(node_id) % 1000) / 100.0 - 5
+        nodes[node_id]['y'] = (hash(node_id + 'y') % 1000) / 100.0 - 5
+
+    iterations = 50
+    k = 10.0 # Optimal distance
+    dt = 0.1 # Time step
+
+    for _ in range(iterations):
+        forces = {node_id: {'x': 0.0, 'y': 0.0} for node_id in nodes}
+        
+        # Calculate repulsion forces
+        for id1 in nodes:
+            for id2 in nodes:
+         
+
+### ../CodeCity-Bench/src/core/scanners/base.py
+from abc import ABC, abstractmethod
+from typing import Any, Dict, List
+from ..loom.models import LoomWeave
+
+class BaseScanner(ABC):
+    """
+    The abstract base class for all CodeCity-Bench scanners.
+    Scanners are responsible for analyzing a target (files, directories, etc.)
+    and producing a 'LoomWeave' representation.
+    """
+
+    def __init__(self, target_path: str):
+        self.target_path = target_path
+
+    @abstractmethod
+    def scan(self) -> LoomWeave:
+        """
+        Perform the scan and return a LoomWeave object.
+        """
+        pass
+
+    @abstractmethod
+    def get_summary(self) -> Dict[str, Any]:
+        """
+        Return a summary of the scanning results.
+        """
+        pass
+
+
+### ../CodeCity-Bench/src/core/scanners/structure_scanner.py
+import os
+from typing import Dict, Any
+from .base import BaseScanner
+from ..loom.models import LoomWeave, Lexeme, LoomMetric, MetricType
+
+class CodeStructureScanner(BaseScanner):
+    """
+    A scanner that maps the file system hierarchy into a LoomWeave.
+    Each file and directory becomes a Lexeme.
+    """
+
+    def scan(self) -> LoomWeave:
+        weave = LoomWeave(version="1.0")
+        
+        for root, dirs, files in os.walk(self.target_path):
+            # Handle directories
+            for d in dirs:
+                dir_path = os.path.join(root, d)
+                rel_path = os.path.relpath(dir_path, self.target_path)
+                
+                lexeme_id = f"dir:{rel_path}"
+                lexeme = Lexeme(id=lexeme_id, label=f"Directory: {rel_path}")
+                
+         
+
+### ../CodeCity-Bench/src/core/scanners/complexity_scanner.py
+import ast
+from ..loom.models import Lexeme, LoomMetric, LoomWeave, MetricType
+
+class ComplexityVisitor(ast.NodeVisitor):
+    def __init__(self):
+        self.complexity = 1
+    
+    def visit_If(self, node):
+        self.complexity += 1
+        self.generic_visit(node)
+        
+    def visit_For(self, node):
+        self.complexity += 1
+        self.generic_visit(node)
+        
+    def visit_While(self, node):
+        self.complexity += 1
+        self.generic_visit(node)
+        
+    def visit_Try(self, node):
+        self.complexity += 1
+        self.generic_visit(node)
+    
+    def visit_ExceptHandler(self, node):
+        self.complexity += 1
+        self.generic_visit(node)
+
+class ComplexityScanner:
+    def scan(self, file_path: str) -> LoomWeave:
+        with open(file_path, 'r') as f
+
+### ../CodeCity-Bench/src/core/scanners/scribe_scanner.py
+import ast
+import tokenize
+from ..loom.models import Lexeme, LoomMetric, LoomWeave, MetricType
+
+class ScribeScanner:
+    """SMACK-grade scanner to quantify the semantic documentation density."""
+
+    def scan(self, file_path: str) -> LoomWeave:
+        """Analyze the file, assess its semantic documentation, and return the Vibe."""
+        # 1. Parse AST to locate functions and docstrings
+        with open(file_path, 'r') as f:
+            source = f.read()
+            tree = ast.parse(source)
+
+        # 2. Tokenize to map comment line numbers (high-precision)
+        comment_lines = set()
+        with open(file_path, 'rb') as f:
+            for tok_type, _, start, _, _ in tokenize.tokenize(f.readline):
+                if tok_type == tokenize.COMMENT:
+                    comment_lines.add(s
+
+### ../CodeCity-Bench/src/core/scanners/security_scanner.py
+import ast
+import os
+from ..loom.models i

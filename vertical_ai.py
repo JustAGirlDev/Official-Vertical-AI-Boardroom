@@ -140,6 +140,8 @@ def main():
     parser.add_argument("--rounds", type=int, default=2)
     parser.add_argument("--generations", type=int, default=2)
     parser.add_argument("--outreach", action="store_true")
+    parser.add_argument("--vertical", default=None, help="Industry vertical for Firefly scout")
+    parser.add_argument("--deep-scout", action="store_true", help="Pull live govt data")
     parser.add_argument("--no-neo4j", action="store_true")
     args = parser.parse_args()
 
@@ -170,6 +172,16 @@ def main():
     print(f" {' | '.join(active)}\n")
 
     context = normalize_input(args)
+
+    # Auto-scout vertical context
+    if context and args.vertical:
+        try:
+            sys.path.insert(0, os.path.dirname(__file__))
+            from firefly_lite import build_vertical_context
+            vfile, vcontent = build_vertical_context(args.vertical, deep=args.deep_scout)
+            context["data"]["content"] = vcontent + "\n\n" + context["data"].get("content","")
+        except Exception as e:
+            print(f"  [Firefly] Scout failed: {e}")
     if not context:
         parser.print_help(); sys.exit(0)
 

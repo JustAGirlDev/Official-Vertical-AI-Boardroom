@@ -29,7 +29,7 @@ GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 
 GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-GROQ_MODEL = "llama3-70b-8192"
+GROQ_MODEL = "llama-3.3-70b-versatile"
 
 
 def _call_gemini(prompt: str, system: str = None) -> str:
@@ -136,3 +136,26 @@ def check_providers() -> dict:
     except Exception:
         status["ollama"] = False
     return status
+
+# Concierge fallback -- drops in when Groq/Gemini rate limit
+import sys
+sys.path.insert(0, '/storage/emulated/0/RootBase/src/swarm/molt')
+
+def call_model_with_concierge(prompt, system=None, tier=None, chairman=False):
+    """Try router first, fall back to Concierge/Anthropic."""
+    try:
+        return call_model(prompt, system=system, tier=tier, chairman=chairman)
+    except RuntimeError as e:
+        if '429' in str(e) or '413' in str(e):
+            try:
+                from concierge import ConciergeClient
+                c = ConciergeClient()
+                result, err = c.generate(prompt, provider='anthropic', system=system)
+                if result:
+                    return result, 'claude-anthropic'
+                result, err = c.generate(prompt, provider='gemini', system=system)
+                if result:
+                    return result, 'gemini-fallback'
+            except Exception as ce:
+                raise RuntimeError(f"All providers failed: {e} | Concierge: {ce}")
+        raise
