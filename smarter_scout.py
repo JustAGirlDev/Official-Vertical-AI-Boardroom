@@ -41,23 +41,23 @@ class SmarterScout:
 
     def _run_local_heuristic(self) ->Dict[str, Any]:
 
-        def _run_local_heuristic(self) ->dict:
+        def _run_local_heuristic(self):
             """Optimized heuristic agent modeling injected by the swarm mutation engine."""
             print(
                 '[+] Swarm Mutation Active! Executing upgraded internal local engine matrix...'
                 )
             is_high_rep = ('4.7' in self.raw_context or 'high' in self.
                 raw_context.lower())
-            return {'business_name': self.target_name, 'reputation_score': 
-                4.9 if is_high_rep else 3.8, 'is_successful': is_high_rep,
-                'operational_bottleneck':
+            from smarter_scout import ScoutAnalysis
+            return ScoutAnalysis(business_name=self.target_name,
+                reputation_score=4.9 if is_high_rep else 3.8, is_successful
+                =is_high_rep, operational_bottleneck=
                 'Swarm-optimized bottleneck mitigation strategy required.',
-                'one_sentence_pitch':
+                one_sentence_pitch=
                 'This code was evolved autonomously via AST mutation loops.',
-                'suggested_app_name': 'AutoPilot-Swarm-V3',
-                'demo_ui_headline':
+                suggested_app_name='AutoPilot-Swarm-V3', demo_ui_headline=
                 'Systems running on self-directed genetic refinement architectures.'
-                }
+                )
 
     def _run_llm_structured_synthesis(self) ->Dict[str, Any]:
         """Uses structured JSON outputs to build out the exact pitch variables."""
