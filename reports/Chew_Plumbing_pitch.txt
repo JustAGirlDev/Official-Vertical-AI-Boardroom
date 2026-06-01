@@ -1,0 +1,43 @@
+============================================================
+FOR: CHEW PLUMBING -- WELLINGTON KS
+FROM: MIKE
+============================================================
+
+I built an AI phone intake system for plumbing and HVAC
+companies. It's called Yvette.
+
+Here is what Yvette does on a call:
+
+Customer says: "My heat went out."
+Yvette asks: "Is there a small light blinking in your
+furnace window? How many times does it blink?"
+Customer: "Four times."
+Yvette: "That's a high limit fault. Check your filter
+right now while I hold -- a clogged filter causes 40%
+of these calls and I can save you a service fee."
+
+If it's not the filter:
+Yvette already knows what parts the tech needs before
+he leaves the shop. She books the call, sets the
+expectation, and tells the customer when to expect him.
+
+She knows left-hand thread on pre-1995 water heaters.
+She knows when to bring the cleanout saddle versus
+pulling the stool. She knows which thermocouple is
+universal and which needs OEM.
+
+She is named after the best dispatcher I ever knew.
+She worked at a plumbing company in Alva Oklahoma and
+she was better than any tech at diagnosing over the
+phone. I built her knowledge into this system.
+
+COST: $249/month
+SETUP: One afternoon at your shop
+GUARANTEE: If Yvette doesn't save you at least one
+wasted truck roll in the first 30 days, you pay nothing.
+
+THE ASK:
+Tell me your three most common call types.
+I will show you Yvette handle each one on my phone.
+Takes 20 minutes.
+============================================================
