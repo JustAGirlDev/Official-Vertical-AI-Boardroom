@@ -33,6 +33,12 @@ try:
 except Exception:
     CONCIERGE_AVAILABLE = False
 
+try:
+    from concierge_new import call_model as concierge_call
+    CONCIERGE_AVAILABLE = True
+except Exception:
+    CONCIERGE_AVAILABLE = False
+
 GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 GROQ_MODEL = "llama-3.3-70b-versatile"
@@ -110,6 +116,12 @@ def call_model(prompt: str, system: str = None, tier: ModelTier = ModelTier.FAST
             return _call_groq(prompt, system), "groq"
         except Exception as e:
             errors.append(f"Groq: {e}")
+        if CONCIERGE_AVAILABLE:
+            try:
+                result, prov = concierge_call(prompt, system=system)
+                return result, f"concierge/{prov}"
+            except Exception as e:
+                errors.append(f"Concierge: {e}")
         try:
             return _call_ollama(prompt, system, tier), f"ollama/{OLLAMA_MODELS[tier]}"
         except Exception as e:
@@ -153,6 +165,12 @@ def call_model_with_concierge(prompt, system=None, tier=None, chairman=False):
         return call_model(prompt, system=system, tier=tier, chairman=chairman)
     except RuntimeError as e:
         if '429' in str(e) or '413' in str(e):
+            if CONCIERGE_AVAILABLE:
+                try:
+                    result, prov = concierge_call(prompt, system=system)
+                    return result, f'concierge/{prov}'
+                except Exception:
+                    pass
             if CONCIERGE_AVAILABLE:
                 try:
                     result, prov = concierge_call(prompt, system=system)

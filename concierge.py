@@ -69,3 +69,7 @@ def call_model(prompt, system=None, chairman=False):
             continue
 
     raise RuntimeError("All providers failed")
+
+def generate(prompt, system=None, chairman=False):
+    """Wrapper to maintain compatibility with expected 'generate' interface."""
+    return call_model(prompt, system=system, chairman=chairman)

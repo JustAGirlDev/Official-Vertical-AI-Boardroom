@@ -1,5 +1,5 @@
 DOMAIN CONTEXT -- PLUMBER
-Generated: 2026-05-31T00:18:52.822493
+Generated: 2026-06-01T11:45:20.130749
 Keywords: 
 
 ==================================================
@@ -9,36 +9,3 @@ OPERATOR INTEL:
 - Lead gen platforms: Angi, Thumbtack, HomeAdvisor 15-25% fees
 - License required all 50 states
 - Biggest pain: no-shows, price shoppers, slow seasons
-BLS Employment (thousands):
-  April 2026: 8248K employees
-  March 2026: 8088K employees
-  February 2026: 7999K employees
-  January 2026: 8003K employees
-  Annual 2025: 8267K employees
-  December 2025: 8199K employees
-FRED error: The read operation timed out
-WorldBank US GDP:
-  2024: $28,750,956,130,731
-  2023: $27,292,170,793,214
-  2022: $25,604,848,907,611
-  2021: $23,315,080,560,000
-HackerNews Signal:
-
-
-REAL MARKET DATA (2026):
-- 62% of calls to small service businesses go unanswered (ServiceTitan 2025)
-- 35-40% of plumbing lead volume comes after hours -- when most miss calls
-- 87% of independent plumbers have zero AI citation share in their own city
-- AI adoption in plumbing: 19% in 2026, up from 7% in 2024 -- window is closing
-- Avoca AI raised $125M at $1B valuation for AI voice agents for trades
-- Avoca on track to book $1 BILLION in jobs for plumbing/HVAC customers in 2026
-- A 3-truck Austin plumber added AI chat -- captured $23,000 in ONE MONTH of missed calls
-- Roto-Rooter and Mr. Rooter now own 19% of all AI search citations for plumbing
-- Independent shops with 30 years and 800 five-star reviews: invisible to AI search
-- Gartner: AI intake reduces labor costs 20% by 2026
-
-PITCH STAT FOR CHEW:
-"A company called Avoca just raised $125 million to build exactly
-what I built -- but for billion-dollar chains at enterprise prices.
-I charge $249/month. 62% of your calls go unanswered right now.
-Every one is a job your competitor got instead."

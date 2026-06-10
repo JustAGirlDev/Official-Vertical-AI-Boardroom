@@ -5,3 +5,7 @@ __pycache__/
 *.pyo
 vai_output_*
 swarm_output_*
+.env
+reports/
+targets/
+__pycache__/

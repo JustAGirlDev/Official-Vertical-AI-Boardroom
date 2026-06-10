@@ -285,8 +285,7 @@ def print_diagnostics():
     print("  ROUTER v3.0 DIAGNOSTICS")
     print("═" * 70)
 
-    print("
-📡 CONFIGURED PROVIDERS:")
+    print(" CONFIGURED PROVIDERS:")
     health = concierge.health_check()
     for name, status in health.items():
         icon = "🟢" if status["available"] else "🔴"
@@ -294,8 +293,7 @@ def print_diagnostics():
               f"models:{status['models_available']:2d} | "
               f"calls:{status['total_calls']:3d} | fails:{status['total_failures']:3d}")
 
-    print("
-📊 CALL STATISTICS (this session):")
+    print(" 📊 CALL STATISTICS (this session):")
     if _call_stats:
         for name, stats in _call_stats.items():
             print(f"  • {name:15s} | calls:{stats['calls']:3d} | "
@@ -303,16 +301,14 @@ def print_diagnostics():
     else:
         print("  No calls made yet")
 
-    print("
-💰 FREE MODELS:")
+    print(" 💰 FREE MODELS:")
     free = concierge.list_free_models()
     for m in free[:10]:  # Show first 10
         print(f"  • {m['provider']:12s} | {m['model'][:35]:35s}")
     if len(free) > 10:
         print(f"  ... and {len(free)-10} more")
 
-    print("
-🎯 TIER MAPPING:")
+    print(" 🎯 TIER MAPPING:")
     for tier in ModelTier:
         caps = [c.name for c in TIER_CAPABILITY_MAP.get(tier, [])]
         prov_tier = TIER_PROVIDER_TIER_MAP.get(tier, ProviderTier.FREE)
@@ -354,8 +350,7 @@ if __name__ == "__main__":
     elif len(sys.argv) > 1 and sys.argv[1] == "--test":
         prompt = " ".join(sys.argv[2:]) if len(sys.argv) > 2 else "Say hello and name your provider"
         print(f"Testing with prompt: '{prompt}'")
-        print("
-Trying BOARDROOM tier...")
+        print(" Trying BOARDROOM tier...")
         try:
             text, prov = call_model(prompt, tier=ModelTier.BOARDROOM)
             print(f"✅ {prov}: {text[:100]}...")
@@ -363,7 +358,6 @@ Trying BOARDROOM tier...")
             print(f"❌ {e}")
     else:
         print_diagnostics()
-        print("
-Usage:")
+        print(" Usage:")
         print("  python router.py --diagnostics    # Full health report")
         print("  python router.py --test 'prompt'  # Test generation")

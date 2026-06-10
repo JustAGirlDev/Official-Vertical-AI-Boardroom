@@ -10,3 +10,13 @@ HackerNews Signal:
   [2pts] Is There a Hyperlocal Search App?
   [149pts] Launch HN: Patterns (YC S21) – A much faster way to build and deploy data apps
   [4pts] Ask HN: What kind of products would you rent after landing in a new country?
+
+OPERATOR INTEL:
+- Avg transaction: $4.50
+- Fuel margin: $0.04-0.07/gal (razor thin)
+- Store margin: 28-32%
+- Labor: 15-20% of revenue
+- Biggest pain: shrink, out-of-stock, payroll compliance
+- Tobacco/lotto: regulated, audit-required, high liability if mishandled
+- Foot traffic driver: fuel brings em in, store margin keeps the lights on
+- Compliance risk: wage theft, tobacco licensing, health code
