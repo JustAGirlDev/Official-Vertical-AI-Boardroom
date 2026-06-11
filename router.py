@@ -18,10 +18,10 @@ class ModelTier(Enum):
 
 OLLAMA_URI = os.environ.get("OLLAMA_URI", "http://127.0.0.1:11434")
 OLLAMA_MODELS = {
-    ModelTier.BOARDROOM: os.environ.get("OLLAMA_BOARDROOM_MODEL", "deepseek-r1:1.5b"),
-    ModelTier.FAST: os.environ.get("OLLAMA_FAST_MODEL", "llama3.2:1b"),
-    ModelTier.CODE: os.environ.get("OLLAMA_CODE_MODEL", "qwen2.5-coder:1.5b"),
-    ModelTier.CHAIRMAN: os.environ.get("OLLAMA_BOARDROOM_MODEL", "deepseek-r1:1.5b"),
+    ModelTier.BOARDROOM: os.environ.get("OLLAMA_BOARDROOM_MODEL", os.environ.get("OLLAMA_BOARDROOM_MODEL", "deepseek-r1:1.5b")),
+    ModelTier.FAST: os.environ.get("OLLAMA_FAST_MODEL", os.environ.get("OLLAMA_FAST_MODEL", "llama3.2:1b")),
+    ModelTier.CODE: os.environ.get("OLLAMA_CODE_MODEL", os.environ.get("OLLAMA_CODE_MODEL", "qwen2.5-coder:1.5b")),
+    ModelTier.CHAIRMAN: os.environ.get("OLLAMA_BOARDROOM_MODEL", os.environ.get("OLLAMA_BOARDROOM_MODEL", "deepseek-r1:1.5b")),
 }
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
@@ -39,9 +39,10 @@ try:
 except Exception:
     CONCIERGE_AVAILABLE = False
 
-GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
+GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-GROQ_MODEL = "llama-3.3-70b-versatile"
+GROQ_MODEL = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
 
 
 def _call_gemini(prompt: str, system: str = None) -> str:
