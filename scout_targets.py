@@ -20,63 +20,48 @@ def fetch(url, json_resp=True):
 
 def score_viability(business):
     """
-    Score a business 0-100 for pitch viability.
-    Sweet spot: established enough to pay, small enough to decide fast.
+    Score a business 0-100 for pitch viability based on verified OSM data.
     """
     score = 0
     reasons = []
-    flags = []
 
-    rating = business.get('rating', 0)
-    review_count = business.get('review_count', 0)
     has_website = business.get('has_website', False)
+    has_phone = business.get('phone') != 'N/A'
+    has_opening_hours = business.get('has_opening_hours', False)
+    address_complete = business.get('address_complete', False)
     category = business.get('category', '').lower()
 
-    # Rating sweet spot: 3.5-4.6
-    # Too low = they know they have problems but won't pay
-    # Too high = they think they don't need help
-    if 3.5 <= rating <= 4.3:
-        score += 30
-        reasons.append(f"Rating {rating} -- motivated to improve")
-    elif 4.3 < rating <= 4.7:
-        score += 20
-        reasons.append(f"Rating {rating} -- successful, pitch growth not repair")
-    elif rating < 3.5:
-        score += 10
-        flags.append(f"Rating {rating} -- may be resistant or in denial")
-    elif rating > 4.7:
-        score += 10
-        flags.append(f"Rating {rating} -- may think they don't need help")
-
-    # Review count sweet spot: 50-400
-    if 50 <= review_count <= 400:
-        score += 25
-        reasons.append(f"{review_count} reviews -- established but not corporate")
-    elif review_count < 50:
-        score += 10
-        flags.append(f"Only {review_count} reviews -- may be too new or too small")
-    elif review_count > 400:
-        score += 15
-        flags.append(f"{review_count} reviews -- may already have marketing team")
-
-    # No website or bad website = opportunity
+    # Website opportunity
     if not has_website:
         score += 25
-        reasons.append("No website -- immediate digital opportunity")
+        reasons.append("No website - immediate digital opportunity")
     else:
         score += 10
-        reasons.append("Has website -- pitch AI layer on top")
+        reasons.append("Has website - pitch AI layer on top")
+
+    # Phone
+    if has_phone:
+        score += 25
+        reasons.append("Has phone number - contactable")
+
+    # Opening hours
+    if has_opening_hours:
+        score += 25
+        reasons.append("Has opening hours - business is operational")
 
     # High value verticals
     high_value = ['plumb', 'hvac', 'heat', 'cool', 'electric', 'auto', 'dealer',
                   'mechanic', 'restaurant', 'dental', 'legal', 'accountant', 'roof']
-    for v in high_value:
-        if v in category:
-            score += 20
-            reasons.append(f"High-value vertical: {category}")
-            break
+    if any(v in category for v in high_value):
+        score += 15
+        reasons.append("High-value vertical detected")
 
-    return min(score, 100), reasons, flags
+    # Address completeness
+    if address_complete:
+        score += 10
+        reasons.append("Address information is complete")
+
+    return min(score, 100), reasons, []
 
 def map_to_vertical(category):
     """Map business category to our vertical context files."""
@@ -182,8 +167,6 @@ def fetch_google_places(location, business_type, api_key):
 def build_target_report(business, score, reasons, flags, vertical):
     """Build a pitch-ready one-pager for a target business."""
     name = business.get('name', 'Unknown')
-    rating = business.get('rating', 'N/A')
-    reviews = business.get('review_count', 'N/A')
     address = business.get('address', 'N/A')
     phone = business.get('phone', 'N/A')
     website = business.get('website', 'None found')
@@ -198,23 +181,19 @@ Location:  {address}
 Phone:     {phone}
 Website:   {website}
 Category:  {category}
-Rating:    {rating} stars ({reviews} reviews)
 
 WHY THEY'RE A TARGET:
 {chr(10).join('  + ' + r for r in reasons)}
 
-WATCH OUTS:
-{chr(10).join('  ! ' + f for f in flags) if flags else '  None identified'}
-
 RECOMMENDED PRODUCT: {vertical.title()} AI Assistant
 SUGGESTED PRICE POINT: $149-299/month
-PITCH ANGLE: {"Growth tool for a winning operation" if score > 70 else "Fix the gap between quality and reputation"}
+PITCH ANGLE: Business operational outreach
 
 OPENING LINE:
-"I noticed {name} has {rating} stars and {reviews} reviews --
-you're clearly doing something right. I built a system that
-helps businesses like yours stop losing time to tire kickers
-and unqualified leads. Takes 10 minutes to show you."
+"I'm reaching out to {name} regarding operational efficiency.
+I've built a system that helps businesses in your category
+stop losing time to tire kickers and unqualified leads.
+Takes 10 minutes to show you how."
 
 BOARDROOM SESSION: Run with --vertical {vertical.replace(' ','_')}
 {'='*60}
@@ -261,6 +240,11 @@ def scout_location(location, radius_km=20, min_score=40):
         for r in results[:8]:  # Cap per category
             # Extract business info from OSM data
             tags = r.get('tags', {}) if 'tags' in r else {}
+
+            # Filter out non-business results
+            if not any(key in tags for key in ['amenity', 'shop', 'craft', 'office']):
+                continue
+
             name = tags.get('name') or r.get('display_name', '').split(',')[0]
             if not name or len(name) < 3:
                 continue
@@ -268,11 +252,11 @@ def scout_location(location, radius_km=20, min_score=40):
             business = {
                 'name': name,
                 'category': osm_type.replace('_', ' '),
-                'rating': tags.get('rating', 4.0),  # OSM rarely has ratings
-                'review_count': 100,  # Default -- enrich with Yelp if available
                 'has_website': bool(tags.get('website') or tags.get('url')),
                 'website': tags.get('website', tags.get('url', 'None found')),
                 'phone': tags.get('phone', tags.get('contact:phone', 'N/A')),
+                'has_opening_hours': bool(tags.get('opening_hours')),
+                'address_complete': bool(tags.get('addr:housenumber') and tags.get('addr:street')),
                 'address': f"{tags.get('addr:housenumber','')} {tags.get('addr:street','')} {tags.get('addr:city','')}".strip() or r.get('display_name','N/A')[:60],
             }
 
